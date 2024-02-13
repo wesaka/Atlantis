@@ -1,0 +1,8 @@
+LOCAL=true
+
+BWAPI_DATA_PATH=C:\\Users\\UPM\\IdeaProjects\\Atlantis\\Starcraft\\
+
+# Change this to the location of ChaosLauncher
+CHAOS_LAUNCHER_PATH=C:\\Users\\UPM\\IdeaProjects\\Atlantis\\BWAPI\\Chaoslauncher\\Chaoslauncher - MultiInstance.exe
+
+# Maybe change the paths to be relative, but not right now

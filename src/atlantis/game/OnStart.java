@@ -16,6 +16,15 @@ import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
+import container.JadeContainer;
+import jade.core.Profile;
+import jade.core.ProfileImpl;
+import jade.core.Runtime;
+import jade.wrapper.AgentContainer;
+import jade.wrapper.StaleProxyException;
+
+import java.util.concurrent.atomic.AtomicReference;
+
 public class OnStart {
 
     public static void execute() {
@@ -73,6 +82,9 @@ public class OnStart {
         if (Env.isParamTweaker()) {
             ParamTweakerFactory.init();
         }
+
+        // Initialize the JADE Container and the Agents
+        JadeContainer.loadBoot();
     }
 
     private static void handleCheckIfUmsMap() {
@@ -132,5 +144,4 @@ public class OnStart {
             throw new RuntimeException("Exception when loading build orders file");
         }
     }
-
 }

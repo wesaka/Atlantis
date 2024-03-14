@@ -1,4 +1,4 @@
-package utils;
+package communication;
 
 import jade.content.Concept;
 import jade.content.ContentElement;
@@ -34,8 +34,9 @@ import java.util.concurrent.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-// We will slowly cannibalize the Utils from the project we had done
-public final class Utils {
+public class Utils {
+    // Define the names for the agents here
+    public static final String COMMUNICATOR_AGENT_NAME = "BotCommunicatorAgent";
 
     // Configs
     //private static final Codec codec = new SLCodec();

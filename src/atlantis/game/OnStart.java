@@ -16,14 +16,7 @@ import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
-import container.JadeContainer;
-import jade.core.Profile;
-import jade.core.ProfileImpl;
-import jade.core.Runtime;
-import jade.wrapper.AgentContainer;
-import jade.wrapper.StaleProxyException;
-
-import java.util.concurrent.atomic.AtomicReference;
+import communication.container.JadeContainer;
 
 public class OnStart {
 

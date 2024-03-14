@@ -1,4 +1,4 @@
-package container;
+package communication.container;
 
 import jade.core.Profile;
 import jade.core.ProfileImpl;

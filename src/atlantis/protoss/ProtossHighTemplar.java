@@ -14,6 +14,7 @@ import atlantis.units.select.Select;
 import bwapi.TechType;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ProtossHighTemplar extends Manager {
 
@@ -44,13 +45,13 @@ public class ProtossHighTemplar extends Manager {
 
     private boolean dontDisturb() {
 
+        Optional<TechType> lastTechUsedOpt = unit.lastTechUsed();
+        Optional<AUnit> lastTechUnitOpt = unit.lastTechUnit();
+
         // Wants to Warp Archon
-        if (
-            unit.lastTechUsed() != null
-                && unit.lastActionLessThanAgo(50, Actions.USING_TECH)
-                && TechType.Archon_Warp.name().equals(unit.lastTechUsed().name())
-                && unit.lastTechUnit().isAlive()
-        ) {
+        if (lastTechUsedOpt.isPresent() && unit.lastActionLessThanAgo(50, Actions.USING_TECH) &&
+                TechType.Archon_Warp.name().equals(lastTechUsedOpt.get().name()) &&
+                lastTechUnitOpt.isPresent() && lastTechUnitOpt.get().isAlive()) {
             unit.setTooltipTactical("Sex & Archon");
             return true;
         }
@@ -64,7 +65,9 @@ public class ProtossHighTemplar extends Manager {
         }
 
         if (unit.lastActionLessThanAgo(40, Actions.USING_TECH)) {
-            unit.setTooltipTactical(unit.lastTechUsed().name() + "...");
+            lastTechUsedOpt.ifPresent(lastTech -> {
+                unit.setTooltipTactical(lastTech.name() + "...");
+            });
             return true;
         }
 

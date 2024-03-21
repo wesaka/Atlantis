@@ -45,12 +45,13 @@ import atlantis.util.log.ErrorLog;
 import atlantis.util.log.Log;
 import atlantis.util.log.LogUnitsToFiles;
 import bwapi.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import tests.unit.FakeUnit;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import static atlantis.units.actions.Actions.RUN_RETREAT;
 
@@ -64,6 +65,8 @@ import static atlantis.units.actions.Actions.RUN_RETREAT;
  * hard to migrate to another bridge. I've already used 3 of them in my career so far.
  */
 //public class AUnit implements UnitInterface, Comparable<AUnit>, HasPosition, AUnitOrders {
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property ="@id")
+@JsonSerialize(using = AUnitSerializer.class)
 public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     /**
@@ -349,53 +352,53 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     // =========================================================
     // Compare type methods
 
-    public boolean isAlive() {
+        public boolean isAlive() {
         return exists() && (hp() > 0 || !UnitsArchive.isDestroyed(id()));
     }
 
-    public boolean isDead() {
+    	public boolean isDead() {
         return !isAlive();
     }
 
-    public boolean canBeHealed() {
+    	public boolean canBeHealed() {
         return _repairableMechanically || _healable;
     }
 
-    public boolean isRepairableMechanically() {
+    	public boolean isRepairableMechanically() {
         return _repairableMechanically;
     }
 
-    public boolean isHealable() {
+    	public boolean isHealable() {
         return _healable;
     }
 
     /**
      * Returns true if given unit is OF TYPE BUILDING.
      */
-    public boolean isABuilding() {
+    	public boolean isABuilding() {
         return type().isBuilding() || type().isAddon();
     }
 
-    public boolean isWorker() {
+    	public boolean isWorker() {
         return type().isWorker();
     }
 
-    public boolean isWraith() {
+    	public boolean isWraith() {
         return type().is(AUnitType.Terran_Wraith);
     }
 
-    public boolean isBunker() {
+    	public boolean isBunker() {
         return type().equals(AUnitType.Terran_Bunker);
     }
 
-    public boolean isBase() {
+    	public boolean isBase() {
         return is(
             AUnitType.Terran_Command_Center, AUnitType.Protoss_Nexus,
             AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, AUnitType.Zerg_Hive
         );
     }
 
-    public boolean isInfantry() {
+    	public boolean isInfantry() {
         return (boolean) cache.get(
             "isInfantry",
             -1,
@@ -403,14 +406,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         );
     }
 
-    public boolean isVehicle() {
+    	public boolean isVehicle() {
         return type().isMechanical();
     }
 
     /**
      * Returns true if given unit is considered to be "ranged" unit (not melee).
      */
-    public boolean isRanged() {
+    	public boolean isRanged() {
         return (boolean) cache.get(
             "isRanged",
             -1,
@@ -421,7 +424,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns true if given unit is considered to be "melee" unit (not ranged).
      */
-    public boolean isMelee() {
+    	public boolean isMelee() {
         return (boolean) cache.get(
             "isMelee",
             -1,
@@ -431,63 +434,63 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     // =========================================================
     // Auxiliary methods
-    public boolean ofType(AUnitType type) {
+    	public boolean ofType(AUnitType type) {
         return type().equals(type);
     }
 
-    public boolean isFullyHealthy() {
+    	public boolean isFullyHealthy() {
         return hp() >= maxHp();
     }
 
-    public int hpPercent() {
+    	public int hpPercent() {
         return 100 * hp() / maxHp();
     }
 
-    public boolean hpPercent(int minPercent) {
+    	public boolean hpPercent(int minPercent) {
         return hpPercent() >= minPercent;
     }
 
-    public double woundPercent() {
+    	public double woundPercent() {
         return 100 - 100.0 * hp() / maxHp();
     }
 
-    public boolean woundPercentMin(int minWoundPercent) {
+    	public boolean woundPercentMin(int minWoundPercent) {
         return woundPercent() >= minWoundPercent;
     }
 
-    public boolean woundPercentMax(int maxWoundPercent) {
+    	public boolean woundPercentMax(int maxWoundPercent) {
         return woundPercent() <= maxWoundPercent;
     }
 
-    public boolean isWounded() {
+    	public boolean isWounded() {
         return hp() < maxHP();
     }
 
-    public boolean isExists() {
+    	public boolean isExists() {
         return u().exists();
     }
 
-    public int shields() {
+    	public int shields() {
         return u().getShields();
     }
 
-    public int maxShields() {
+    	public int maxShields() {
         return type().ut().maxShields();
     }
 
-    public int maxHP() {
+    	public int maxHP() {
         return maxHp() + maxShields();
     }
 
-    public int minesCount() {
+    	public int minesCount() {
         return u().getSpiderMineCount();
     }
 
-    public String name() {
+    	public String name() {
         return type().name();
     }
 
-    public String nameWithId() {
+    	public String nameWithId() {
         return type().name() + " #" + id();
     }
 
@@ -498,7 +501,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
-    public int groundWeaponRange() {
+    	public int groundWeaponRange() {
         int range = cacheInt.get(
             "groundWeaponRange",
             60,
@@ -525,7 +528,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
-    public double groundWeaponMinRange() {
+    	public double groundWeaponMinRange() {
         return cacheInt.get(
             "getGroundWeaponMinRange",
             60,
@@ -536,7 +539,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns max shoot range (in build tiles) of this unit against land targets.
      */
-    public double airWeaponRange() {
+    	public double airWeaponRange() {
         return cacheInt.get(
             "airWeaponRange",
             60,
@@ -564,7 +567,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns which unit of the same type this unit is. E.g. it can be first (0) Overlord or third (2)
      * Zergling. It compares IDs of units to return correct result.
      */
-    public int getUnitIndexInBwapi() {
+    	public int getUnitIndexInBwapi() {
         int index = 0;
         for (AUnit otherUnit : Select.our().ofType(type()).list()) {
             if (otherUnit.id() < this.id()) {
@@ -613,7 +616,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //        return this;
 //    }
 
-    public String tooltip() {
+    	public String tooltip() {
 //        if (AGame.getTimeFrames() - tooltipStartInFrames > 30) {
 //            String tooltipToReturn = this.tooltip;
 //            this.tooltip = null;
@@ -627,7 +630,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         this.tooltip = null;
     }
 
-    public boolean hasTooltip() {
+    	public boolean hasTooltip() {
         return tooltip != null && !tooltip.equals("");
     }
 
@@ -648,38 +651,38 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         else return canShootAir && _isMilitaryBuildingAntiAir;
     }
 
-    public boolean isGroundUnit() {
+    	public boolean isGroundUnit() {
         return !type().isAir();
     }
 
-    public boolean isAir() {
+    	public boolean isAir() {
         return type().isAir();
     }
 
-    public boolean isMine() {
+    	public boolean isMine() {
         return type().equals(AUnitType.Terran_Vulture_Spider_Mine);
     }
 
-    public boolean isLarvaOrEgg() {
+    	public boolean isLarvaOrEgg() {
         return type().equals(AUnitType.Zerg_Larva) || type().equals(AUnitType.Zerg_Egg);
     }
 
-    public boolean isLarva() {
+    	public boolean isLarva() {
         return type().equals(AUnitType.Zerg_Larva);
     }
 
-    public boolean isEgg() {
+    	public boolean isEgg() {
         return type().equals(AUnitType.Zerg_Egg);
     }
 
     /**
      * Not that we're racists, but buildings, spider mines and larvas aren't really units...
      */
-    public boolean isRealUnit() {
+    	public boolean isRealUnit() {
         return type().isRealUnit();
     }
 
-    public boolean isRealUnitOrBuilding() {
+    	public boolean isRealUnitOrBuilding() {
         return type().isRealUnitOrBuilding();
     }
 
@@ -893,7 +896,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns true if given unit is currently (this frame) running from an enemy.
      */
-    public boolean isRunning() {
+    	public boolean isRunning() {
 //        if (runningManager.isRunning()) {
 //            APainter.paintCircleFilled(this, 5, Color.Red);
 //        }
@@ -901,7 +904,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return runningManager.isRunning();
     }
 
-    public boolean isRetreating() {
+    	public boolean isRetreating() {
         return isRunning() && lastActionLessThanAgo(60, RUN_RETREAT);
     }
 
@@ -946,14 +949,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns the frames counter (time) when the unit had been issued any command.
      */
-    public int lastUnitOrderTime() {
+    	public int lastUnitOrderTime() {
         return _lastActionReceived;
     }
 
     /**
      * Returns the frames counter (time) since the unit had been issued any command.
      */
-    public int lastActionFramesAgo() {
+    	public int lastActionFramesAgo() {
         return AGame.now() - _lastActionReceived;
     }
 
@@ -968,7 +971,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns true if unit has anti-ground weapon.
      */
-    public boolean canAttackGroundUnits() {
+    	public boolean canAttackGroundUnits() {
         return (boolean) cache.get(
             "canAttackGroundUnits",
             -1,
@@ -979,7 +982,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     /**
      * Returns true if unit has anti-air weapon.
      */
-    public boolean canAttackAirUnits() {
+    	public boolean canAttackAirUnits() {
         return (boolean) cache.get(
             "canAttackAirUnits",
             -1,
@@ -999,7 +1002,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns number of frames unit has to wait between the shots.
      * E.g. for Dragoon this value will be always 30.
      */
-    public int cooldownAbsolute() {
+    	public int cooldownAbsolute() {
         if (canAttackGroundUnits()) {
             return groundWeapon().damageCooldown();
         }
@@ -1858,6 +1861,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isFirstCombatUnit() {
+        // Just going to return anything if this is null
+        if (Select.ourCombatUnits().first() == null)
+            return false;
+
         return id() == Select.ourCombatUnits().first().id();
     }
 
@@ -2004,16 +2011,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return lastActionAgo(Actions.USING_TECH);
     }
 
-    public TechType lastTechUsed() {
-        return _lastTech;
+    public Optional<TechType> lastTechUsed() {
+        return Optional.ofNullable(_lastTech);
     }
 
-    public APosition lastTechPosition() {
-        return _lastTechPosition;
+    public Optional<APosition> lastTechPosition() {
+        return Optional.ofNullable(_lastTechPosition);
     }
 
-    public AUnit lastTechUnit() {
-        return _lastTechUnit;
+    public Optional<AUnit> lastTechUnit() {
+        return Optional.ofNullable(_lastTechUnit);
     }
 
     public boolean hasCargo() {

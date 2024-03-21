@@ -46,7 +46,7 @@ Exploits
 --------------------------------------------------------------------------------
 
   Bug Fixes
-- Fixed a communication bug affecting third party leagues.
+- Fixed a conclave bug affecting third party leagues.
 - Alt-F6 no longer stalls the game on Windows.
 - Game now works correctly on versions of Mac OS X which do not support 256-color
   mode.

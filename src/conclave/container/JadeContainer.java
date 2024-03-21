@@ -1,4 +1,4 @@
-package communication.container;
+package conclave.container;
 
 import jade.core.Profile;
 import jade.core.ProfileImpl;

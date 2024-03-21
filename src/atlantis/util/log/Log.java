@@ -5,6 +5,15 @@ import atlantis.units.AUnit;
 
 import java.util.ArrayList;
 
+import atlantis.units.AUnitSerializer;
+import bwapi.Unit;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import conclave.publisher.MessageWithUnit;
+import redis.clients.jedis.Jedis;
+
 public class Log {
 
     /**
@@ -26,11 +35,19 @@ public class Log {
     private int expireAfterFrames;
     private int limit;
 
+    private Jedis publisherJedis;
+    private static final String CHANNEL_NAME = "logChannel";
+    private ObjectMapper objectMapper = new ObjectMapper();
+    private SimpleModule simpleModule = new SimpleModule();
+
     // =========================================================
 
     public Log(int expireAfterFrames, int limit) {
         this.expireAfterFrames = expireAfterFrames;
         this.limit = limit;
+
+        // Initiate our publisher
+        this.publisherJedis = new Jedis("localhost", 6379);
     }
 
     // =========================================================
@@ -41,7 +58,19 @@ public class Log {
             LogUnitsToFiles.saveUnitLogToFile(message, unit);
         }
 
-//        System.out.println("LOG: " + message);
+        // System.out.println("LOG: " + message);
+
+        // Create a JSON object to include both message and unit
+        MessageWithUnit messageWithUnit = new MessageWithUnit(message, unit);
+
+        try {
+            String serializedMessage = objectMapper.writeValueAsString(messageWithUnit);
+
+            // Publish our message to the pub/sub channel
+            publisherJedis.publish(CHANNEL_NAME, serializedMessage);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         if (messages.size() > limit) {
             messages.remove(0);

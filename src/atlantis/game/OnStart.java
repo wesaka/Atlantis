@@ -16,7 +16,7 @@ import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
-import communication.container.JadeContainer;
+import conclave.container.JadeContainer;
 
 public class OnStart {
 
@@ -77,7 +77,7 @@ public class OnStart {
         }
 
         // Initialize the JADE Container and the Agents
-        JadeContainer.loadBoot();
+        //JadeContainer.loadBoot();
     }
 
     private static void handleCheckIfUmsMap() {
